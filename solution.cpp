@@ -78,9 +78,11 @@ namespace {
 using Price = long double;
 using Quantity = long long;
 
+enum Side { Buy = 0, Sell = 1 };
+
 struct Order {
     long long order_id = 0;
-    long long side = 0;
+    Side side = Side::Buy;
     Quantity quantity = 0;
     Price price = 0;
 };
@@ -125,7 +127,7 @@ private:
     std::unordered_map<long long, std::list<Order>::iterator> orders_;
 
     void match_against(Order& incoming) {
-        bool incoming_is_buy = incoming.side == 0;
+        bool incoming_is_buy = (incoming.side == Side::Buy);
         auto& book = incoming_is_buy ? asks_ : bids_;
 
         while (incoming.quantity > 0 && !book.empty()) {
@@ -162,7 +164,7 @@ private:
     }
 
     void insert_resting(const Order& order) {
-        auto& book = (order.side == 0) ? bids_ : asks_;
+        auto& book = (order.side == Side::Buy) ? bids_ : asks_;
         auto& level = book[order.price];
         level.push_back(order);
         auto iterator = std::prev(level.end());
@@ -171,7 +173,7 @@ private:
 
     void erase_price_level(std::list<Order>::iterator iterator) {
         const Order& order = *iterator;
-        auto& book = (order.side == 0) ? bids_ : asks_;
+        auto& book = (order.side == Side::Buy) ? bids_ : asks_;
 
         auto level_it = book.find(order.price);
         if (level_it == book.end()) return;
@@ -212,10 +214,12 @@ int main() {
                 continue;
             }
 
-            if (!IO::parse_long_long(fields[2], order.side) || (order.side != 0 && order.side != 1)) {
+            long long side_val = 0;
+            if (!IO::parse_long_long(fields[2], side_val) || (side_val != 0 && side_val != 1)) {
                 std::cerr << "Invalid side: " << fields[2] << '\n';
                 continue;
             }
+            order.side = static_cast<Side>(side_val);
 
             if (!IO::parse_long_long(fields[3], order.quantity) || order.quantity <= 0) {
                 std::cerr << "Invalid quantity: " << fields[3] << '\n';
