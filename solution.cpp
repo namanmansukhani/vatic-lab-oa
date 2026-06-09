@@ -14,10 +14,10 @@
  * 
  * Trade-offs:
  * - Insertion into a linked list requires a node allocation.
- * - Linked list iteration is bad for cache locality compared to a contiguous data structure.
+ * - Linked list iteration is bad for cache locality compared to a contiguously allocated data structure.
  * 
  * However, this design provides O(1) cancellation by order id.
- * note: technically this implementation is O(log(P)), where P is the number of price levels, but we would expect P to be small
+ * note: technically this implementation is O(log(P)), where P is the number of price levels, but we would expect P to be much smaller than the number of orders.
  */
 
 #include <cerrno>
@@ -61,6 +61,8 @@ namespace IO {
         return true;
     }
 
+    // simple CSV parsing
+    // in production, we would have a zero-allocation solution
     std::vector<std::string> split_csv(const std::string& line) {
         std::vector<std::string> tokens;
         std::stringstream stream(line);
