@@ -37,12 +37,12 @@ namespace IO {
         char* end = nullptr;
         errno = 0;
 
-        long v = std::strtoll(s.c_str(), &end, 10);
+        long long v = std::strtoll(s.c_str(), &end, 10);
 
         if (errno != 0 || end == s.c_str() || *end != '\0')
             return false;
 
-        value = static_cast<long long>(v);
+        value = v;
         return true;
     }
 
@@ -52,7 +52,7 @@ namespace IO {
         char* end = nullptr;
         errno = 0;
 
-        double v = std::strtod(s.c_str(), &end);
+        long double v = std::strtold(s.c_str(), &end);
 
         if (errno != 0 || end == s.c_str() || *end != '\0')
             return false;
