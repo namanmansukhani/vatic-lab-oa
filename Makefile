@@ -29,4 +29,4 @@ check: $(TARGET)
 	done
 
 submit: clean all
-	tar -cvzf submission.tar.gz $(SOURCE) $(TARGET) tests Makefile README.md
+	zip -r submission.zip $(SOURCE) $(TARGET) tests Makefile README.md
